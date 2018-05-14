@@ -1037,12 +1037,12 @@ impl TenderMint {
 
                 // verify the timestamp
                 let block_timestamp = block.get_header().timestamp;
-                let time_interval: u64  = 3000;
+                let time_interval: u64 = 3000;
                 if self.timestamp + time_interval <= block_timestamp {
                     self.timestamp = block_timestamp
                 } else {
                     trace!("handle proposal timestamp is unvalid");
-                    return Err(EngineError::InvalidTimeInterval):
+                    return Err(EngineError::InvalidTimeInterval);
                 }
 
                 // verify the txs in this proposal
