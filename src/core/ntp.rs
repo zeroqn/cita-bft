@@ -44,10 +44,10 @@
 
 use ntp::errors::Error;
 use ntp::request;
-use time::{Duration, Timespec};
 use time::now_utc;
+use time::{Duration, Timespec};
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct Ntp {
     pub enabled: bool,
     pub threshold: i64,
@@ -55,12 +55,6 @@ pub struct Ntp {
 }
 
 impl Ntp {
-    /// New a config form the path
-    pub fn new(path: &str) -> Self {
-        let config = parse_config!(Ntp, path);
-        config.into()
-    }
-
     /// Check the system clock offset overflow the threshold
     pub fn clock_offset_overflow(&self) -> bool {
         let mut offset_overflow = false;
