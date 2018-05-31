@@ -1160,11 +1160,13 @@ impl TenderMint {
     }
 
     pub fn new_proposal(&mut self) {
+        // The proposer should propose the block which he is locked on
         if let Some(lock_round) = self.lock_round {
             let lock_blk = &self.locked_block;
             let lock_vote = &self.locked_vote;
             let lock_blk = lock_blk.clone().unwrap();
             {
+                // could eliminate this calculation by caching
                 let lock_blk_hash = lock_blk.crypt_hash();
                 info!(
                     "proposal lock block: height {:?}, round {:?} block hash {:?}",
@@ -1593,7 +1595,7 @@ impl TenderMint {
 
         let pre_hash = H256::from_slice(&status.hash);
         if height > 0 && status_height + 1 == height {
-            // try efforts to save previous hash,when current block is not commit to chain
+            // try to save previous hash, when current block hasn't been committed to chain
             if step < Step::CommitWait {
                 self.pre_hash = Some(pre_hash);
             }
@@ -1608,12 +1610,14 @@ impl TenderMint {
             }
             return;
         }
+
         let r = if status_height == height {
             self.pre_hash = Some(pre_hash);
             self.round
         } else {
             INIT_ROUND
         };
+
         // try my effor to save proof,when I skipping commit_blcok by the chain sending new status.
         if self.proof.height != height {
             if let Some(hash) = self.proposal {
